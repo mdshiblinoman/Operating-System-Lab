@@ -1,3 +1,9 @@
+/*
+To write a C program to perform various file operations like
+create, write, read, delete, copy, move and list files in the
+current directory with a specific extension (.txt).
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
