@@ -3,8 +3,7 @@
     At each time unit, the process with the LONGEST remaining burst time runs.
 */
 
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
 
 struct Process

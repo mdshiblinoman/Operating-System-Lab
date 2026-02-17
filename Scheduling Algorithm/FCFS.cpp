@@ -1,7 +1,6 @@
 // To Write a C++ program for implementation of FCFS Scheduling Algorithm.
 
-#include <iostream>
-#include <iomanip>
+#include <bits/stdc++.h>
 using namespace std;
 
 int main()
