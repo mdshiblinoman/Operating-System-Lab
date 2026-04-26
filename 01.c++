@@ -1,3 +1,11 @@
+/*
+Question 1-Process
+Write a C program that creates a child process using fork(). Print:
+    Parent PID
+    Child PID
+    Parent Process ID (PPID) of child
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
