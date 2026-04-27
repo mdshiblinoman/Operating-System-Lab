@@ -25,8 +25,18 @@ void inputProcesses(vector<Process> &p)
     for (int i = 0; i < n; i++)
     {
         p[i].pid = i + 1;
+    }
+
+    cout << "Enter all arrival times (AT) in order P1 to P" << n << ":\n";
+    for (int i = 0; i < n; i++)
+    {
         cout << "AT of P" << p[i].pid << ": ";
         cin >> p[i].at;
+    }
+
+    cout << "Enter all burst times (BT) in order P1 to P" << n << ":\n";
+    for (int i = 0; i < n; i++)
+    {
         cout << "BT of P" << p[i].pid << ": ";
         cin >> p[i].bt;
     }
@@ -167,6 +177,19 @@ void printResults(const vector<Process> &p, double avgWT, double avgTAT)
     cout << "Average TAT = " << avgTAT << "\n";
 }
 
+void printCalculationDetails(const vector<Process> &p)
+{
+    cout << "\nCalculation Details:\n";
+    for (size_t i = 0; i < p.size(); i++)
+    {
+        cout << "P" << p[i].pid
+             << ": TAT = CT - AT = " << p[i].ct << " - " << p[i].at
+             << " = " << p[i].tat
+             << ", WT = TAT - BT = " << p[i].tat << " - " << p[i].bt
+             << " = " << p[i].wt << "\n";
+    }
+}
+
 int main()
 {
     vector<Process> p;
@@ -177,6 +200,7 @@ int main()
     inputProcesses(p);
     runSJF(p, gantt, avgWT, avgTAT);
     printGanttChart(gantt);
+    printCalculationDetails(p);
     printResults(p, avgWT, avgTAT);
 
     return 0;

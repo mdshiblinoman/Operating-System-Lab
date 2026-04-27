@@ -4,109 +4,114 @@ using namespace std;
 struct Process
 {
     int pid;
-    int arrivalTime;
-    int burstTime;
-    int remainingTime;
-    int completionTime;
-    int turnaroundTime;
-    int waitingTime;
+    int at;
+    int bt;
+    int rt;
+    int ct;
+    int tat;
+    int wt;
 };
 
-void inputProcesses(vector<Process> &processes)
+void inputProcesses(vector<Process> &p)
 {
     int n;
     cout << "Enter number of processes: ";
     cin >> n;
 
-    processes.resize(n);
+    p.resize(n);
 
     for (int i = 0; i < n; i++)
     {
-        processes[i].pid = i + 1;
+        p[i].pid = i + 1;
+        p[i].ct = 0;
+        p[i].tat = 0;
+        p[i].wt = 0;
+    }
 
-        cout << "Arrival time of P" << processes[i].pid << ": ";
-        cin >> processes[i].arrivalTime;
+    cout << "Enter all arrival times (AT) in order P1 to P" << n << ":\n";
+    for (int i = 0; i < n; i++)
+    {
+        cout << "AT of P" << p[i].pid << ": ";
+        cin >> p[i].at;
+    }
 
-        cout << "Burst time of P" << processes[i].pid << ": ";
-        cin >> processes[i].burstTime;
+    cout << "Enter all burst times (BT) in order P1 to P" << n << ":\n";
+    for (int i = 0; i < n; i++)
+    {
+        cout << "BT of P" << p[i].pid << ": ";
+        cin >> p[i].bt;
 
-        processes[i].remainingTime = processes[i].burstTime;
-        processes[i].completionTime = 0;
-        processes[i].turnaroundTime = 0;
-        processes[i].waitingTime = 0;
+        p[i].rt = p[i].bt;
     }
 }
 
-int findShortestRemainingProcess(const vector<Process> &processes, int currentTime)
+int findShortestRemainingProcess(const vector<Process> &p, int t)
 {
-    int index = -1;
-    int bestRemainingTime = numeric_limits<int>::max();
+    int idx = -1;
+    int min_rt = numeric_limits<int>::max();
 
-    for (size_t i = 0; i < processes.size(); i++)
+    for (size_t i = 0; i < p.size(); i++)
     {
-        if (processes[i].arrivalTime <= currentTime && processes[i].remainingTime > 0)
+        if (p[i].at <= t && p[i].rt > 0)
         {
-            if (processes[i].remainingTime < bestRemainingTime)
+            if (p[i].rt < min_rt)
             {
-                bestRemainingTime = processes[i].remainingTime;
-                index = static_cast<int>(i);
+                min_rt = p[i].rt;
+                idx = static_cast<int>(i);
             }
-            else if (processes[i].remainingTime == bestRemainingTime && index != -1 &&
-                     processes[i].arrivalTime < processes[index].arrivalTime)
+            else if (p[i].rt == min_rt && idx != -1 && p[i].at < p[idx].at)
             {
-                index = static_cast<int>(i);
+                idx = static_cast<int>(i);
             }
         }
     }
 
-    return index;
+    return idx;
 }
 
-void calculateSRTF(vector<Process> &processes)
+void calculateSRTF(vector<Process> &p)
 {
-    int completed = 0;
-    int currentTime = 0;
-    int n = static_cast<int>(processes.size());
+    int done = 0;
+    int t = 0;
+    int n = static_cast<int>(p.size());
 
-    while (completed < n)
+    while (done < n)
     {
-        int index = findShortestRemainingProcess(processes, currentTime);
+        int idx = findShortestRemainingProcess(p, t);
 
-        if (index == -1)
+        if (idx == -1)
         {
-            currentTime++;
+            t++;
             continue;
         }
 
-        processes[index].remainingTime--;
-        currentTime++;
+        p[idx].rt--;
+        t++;
 
-        if (processes[index].remainingTime == 0)
+        if (p[idx].rt == 0)
         {
-            completed++;
-            processes[index].completionTime = currentTime;
-            processes[index].turnaroundTime =
-                processes[index].completionTime - processes[index].arrivalTime;
-            processes[index].waitingTime =
-                processes[index].turnaroundTime - processes[index].burstTime;
+            done++;
+            p[idx].ct = t;
+            p[idx].tat = p[idx].ct - p[idx].at;
+            p[idx].wt = p[idx].tat - p[idx].bt;
         }
     }
 }
 
-void printResults(const vector<Process> &processes)
+void printResults(const vector<Process> &p)
 {
     cout << "\n+-----+------+------+------+------+------+\n";
     cout << "| PID |  AT  |  BT  |  CT  | TAT  |  WT  |\n";
     cout << "+-----+------+------+------+------+------+\n";
 
-    for (size_t i = 0; i < processes.size(); i++)
+    for (size_t i = 0; i < p.size(); i++)
     {
-        cout << "| " << setw(3) << processes[i].pid << " | "
-             << setw(4) << processes[i].arrivalTime << " | "
-             << setw(4) << processes[i].burstTime << " | "
-             << setw(4) << processes[i].completionTime << " | "
-             << setw(4) << processes[i].turnaroundTime << " | "
-             << setw(4) << processes[i].waitingTime << " |\n";
+        cout << "| " << setw(3) << p[i].pid << " | "
+             << setw(4) << p[i].at << " | "
+             << setw(4) << p[i].bt << " | "
+             << setw(4) << p[i].ct << " | "
+             << setw(4) << p[i].tat << " | "
+             << setw(4) << p[i].wt << " |\n";
     }
 
     cout << "+-----+------+------+------+------+------+\n";
@@ -114,11 +119,11 @@ void printResults(const vector<Process> &processes)
 
 int main()
 {
-    vector<Process> processes;
+    vector<Process> p;
 
-    inputProcesses(processes);
-    calculateSRTF(processes);
-    printResults(processes);
+    inputProcesses(p);
+    calculateSRTF(p);
+    printResults(p);
 
     return 0;
 }
