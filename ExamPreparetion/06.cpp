@@ -18,8 +18,7 @@ struct Process
 struct GanttBlock
 {
     string label;
-    int start;
-    int end;
+    int start, end;
 };
 
 void inputProcesses(vector<Process> &p)
@@ -55,27 +54,12 @@ void inputProcesses(vector<Process> &p)
     }
 }
 
-int nextArrivalTime(const vector<Process> &p, int currentTime)
-{
-    int nextArrival = INT_MAX;
-
-    for (size_t i = 0; i < p.size(); i++)
-    {
-        if (p[i].rt > 0 && p[i].at > currentTime)
-        {
-            nextArrival = min(nextArrival, p[i].at);
-        }
-    }
-
-    return nextArrival == INT_MAX ? -1 : nextArrival;
-}
-
-int findShortestRemainingProcess(const vector<Process> &p, int t)
+int findShortestRemainingProcess(vector<Process> &p, int t)
 {
     int idx = -1;
     int min_rt = INT_MAX;
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < (p.size()); i++)
     {
         if (p[i].at <= t && p[i].rt > 0)
         {
@@ -94,21 +78,11 @@ int findShortestRemainingProcess(const vector<Process> &p, int t)
     return idx;
 }
 
-void addGanttBlock(vector<GanttBlock> &gantt, const string &label, int start, int end)
-{
-    if (start < end)
-    {
-        gantt.push_back({label, start, end});
-    }
-}
-
 void calculateSRTF(vector<Process> &p, vector<GanttBlock> &gantt)
 {
     int done = 0;
     int t = 0;
     int n = static_cast<int>(p.size());
-    string currentLabel = "";
-    int segmentStart = 0;
 
     while (done < n)
     {
@@ -116,38 +90,28 @@ void calculateSRTF(vector<Process> &p, vector<GanttBlock> &gantt)
 
         if (idx == -1)
         {
-            int nextArrival = nextArrivalTime(p, t);
-
-            if (nextArrival == -1)
+            if (gantt.empty() || gantt.back().label != "Idle")
             {
-                break;
+                gantt.push_back({"Idle", t, t + 1});
+            }
+            else
+            {
+                gantt.back().end++;
             }
 
-            if (currentLabel != "Idle")
-            {
-                addGanttBlock(gantt, currentLabel, segmentStart, t);
-                currentLabel = "Idle";
-                segmentStart = t;
-            }
-
-            t = nextArrival;
-
-            if (currentLabel != "Idle")
-            {
-                currentLabel = "Idle";
-                segmentStart = t;
-            }
-
+            t++;
             continue;
         }
 
         string label = "P" + to_string(p[idx].pid);
 
-        if (currentLabel != label)
+        if (gantt.empty() || gantt.back().label != label)
         {
-            addGanttBlock(gantt, currentLabel, segmentStart, t);
-            currentLabel = label;
-            segmentStart = t;
+            gantt.push_back({label, t, t + 1});
+        }
+        else
+        {
+            gantt.back().end++;
         }
 
         p[idx].rt--;
@@ -161,15 +125,13 @@ void calculateSRTF(vector<Process> &p, vector<GanttBlock> &gantt)
             p[idx].wt = p[idx].tat - p[idx].bt;
         }
     }
-
-    addGanttBlock(gantt, currentLabel, segmentStart, t);
 }
 
-void printGanttChart(const vector<GanttBlock> &gantt)
+void printGanttChart(vector<GanttBlock> &gantt)
 {
     cout << "\nGantt Chart:\n";
 
-    for (size_t i = 0; i < gantt.size(); i++)
+    for (int i = 0; i < static_cast<int>(gantt.size()); i++)
     {
         cout << "| " << gantt[i].label << " ";
     }
@@ -178,7 +140,7 @@ void printGanttChart(const vector<GanttBlock> &gantt)
     if (!gantt.empty())
     {
         cout << gantt[0].start;
-        for (size_t i = 0; i < gantt.size(); i++)
+        for (int i = 0; i < gantt.size(); i++)
         {
             cout << setw(6) << gantt[i].end;
         }
@@ -188,11 +150,14 @@ void printGanttChart(const vector<GanttBlock> &gantt)
 
 void printResults(const vector<Process> &p)
 {
+    double totalTAT = 0;
+    double totalWT = 0;
+
     cout << "\n+-----+------+------+------+------+------+\n";
     cout << "| PID |  AT  |  BT  |  CT  | TAT  |  WT  |\n";
     cout << "+-----+------+------+------+------+------+\n";
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         cout << "| " << setw(3) << p[i].pid << " | "
              << setw(4) << p[i].at << " | "
@@ -200,9 +165,19 @@ void printResults(const vector<Process> &p)
              << setw(4) << p[i].ct << " | "
              << setw(4) << p[i].tat << " | "
              << setw(4) << p[i].wt << " |\n";
+
+        totalTAT += p[i].tat;
+        totalWT += p[i].wt;
     }
 
     cout << "+-----+------+------+------+------+------+\n";
+
+    if (!p.empty())
+    {
+        cout << fixed << setprecision(2);
+        cout << "Average Turnaround Time: " << (totalTAT / p.size()) << "\n";
+        cout << "Average Waiting Time: " << (totalWT / p.size()) << "\n";
+    }
 }
 
 int main()

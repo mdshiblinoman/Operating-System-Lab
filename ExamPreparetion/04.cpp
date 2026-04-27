@@ -86,7 +86,7 @@ void calculateFCFS(vector<Process> &p, vector<GanttBlock> &gantt, double &avgWT,
     avgTAT = static_cast<double>(totalTAT) / p.size();
 }
 
-void printGanttChart(const vector<GanttBlock> &gantt)
+void printGanttChart(vector<GanttBlock> &gantt)
 {
     cout << "\nGantt Chart:\n";
 
@@ -107,7 +107,7 @@ void printGanttChart(const vector<GanttBlock> &gantt)
     }
 }
 
-void printResults(const vector<Process> &p, double avgWT, double avgTAT)
+void printResults(vector<Process> &p, double avgWT, double avgTAT)
 {
     cout << "\n+-----+------+------+------+------+------+\n";
     cout << "| PID |  AT  |  BT  |  CT  | TAT  |  WT  |\n";

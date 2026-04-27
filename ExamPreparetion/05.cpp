@@ -32,9 +32,7 @@ void inputProcesses(vector<Process> &p)
     p.resize(n);
 
     for (int i = 0; i < n; i++)
-    {
         p[i].pid = i + 1;
-    }
 
     cout << "Enter all arrival times (AT) in order P1 to P" << n << ":\n";
     for (int i = 0; i < n; i++)
@@ -51,30 +49,18 @@ void inputProcesses(vector<Process> &p)
     }
 }
 
-int pickNextProcess(const vector<Process> &p, int time)
+int pickNextProcess(vector<Process> &p, int time)
 {
     int idx = -1;
-
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         if (p[i].done || p[i].at > time)
-        {
             continue;
-        }
 
-        if (idx == -1)
-        {
-            idx = i;
-        }
-        else if (p[i].bt < p[idx].bt)
-        {
-            idx = i;
-        }
-        else if (p[i].bt == p[idx].bt && p[i].at < p[idx].at)
-        {
-            idx = i;
-        }
-        else if (p[i].bt == p[idx].bt && p[i].at == p[idx].at && p[i].pid < p[idx].pid)
+        if (idx == -1 ||
+            p[i].bt < p[idx].bt ||
+            (p[i].bt == p[idx].bt && p[i].at < p[idx].at) ||
+            (p[i].bt == p[idx].bt && p[i].at == p[idx].at && p[i].pid < p[idx].pid))
         {
             idx = i;
         }
@@ -83,11 +69,10 @@ int pickNextProcess(const vector<Process> &p, int time)
     return idx;
 }
 
-int nextArrivalTime(const vector<Process> &p)
+int nextArrivalTime(vector<Process> &p)
 {
     int minArrival = -1;
-
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         if (p[i].done)
         {
@@ -109,7 +94,7 @@ void runSJF(vector<Process> &p, vector<GanttBlock> &gantt, double &avgWT, double
     int completed = 0;
     int totalWT = 0;
     int totalTAT = 0;
-    int n = static_cast<int>(p.size());
+    int n = p.size();
 
     while (completed < n)
     {
@@ -123,31 +108,28 @@ void runSJF(vector<Process> &p, vector<GanttBlock> &gantt, double &avgWT, double
             continue;
         }
 
-        int start = time;
-        int end = start + p[idx].bt;
-
-        p[idx].ct = end;
+        p[idx].ct = time + p[idx].bt;
         p[idx].tat = p[idx].ct - p[idx].at;
         p[idx].wt = p[idx].tat - p[idx].bt;
         p[idx].done = true;
 
-        gantt.push_back({"P" + to_string(p[idx].pid), start, end});
+        gantt.push_back({"P" + to_string(p[idx].pid), time, p[idx].ct});
 
         totalWT += p[idx].wt;
         totalTAT += p[idx].tat;
-        time = end;
+        time = p[idx].ct;
         completed++;
     }
 
-    avgWT = static_cast<double>(totalWT) / n;
-    avgTAT = static_cast<double>(totalTAT) / n;
+    avgWT = (double)(totalWT) / n;
+    avgTAT = (double)(totalTAT) / n;
 }
 
-void printGanttChart(const vector<GanttBlock> &gantt)
+void printGanttChart(vector<GanttBlock> &gantt)
 {
     cout << "\nGantt Chart:\n";
 
-    for (size_t i = 0; i < gantt.size(); i++)
+    for (int i = 0; i < gantt.size(); i++)
     {
         cout << "| " << gantt[i].label << " ";
     }
@@ -156,7 +138,7 @@ void printGanttChart(const vector<GanttBlock> &gantt)
     if (!gantt.empty())
     {
         cout << gantt[0].start;
-        for (size_t i = 0; i < gantt.size(); i++)
+        for (int i = 0; i < gantt.size(); i++)
         {
             cout << setw(6) << gantt[i].end;
         }
@@ -164,13 +146,13 @@ void printGanttChart(const vector<GanttBlock> &gantt)
     }
 }
 
-void printResults(const vector<Process> &p, double avgWT, double avgTAT)
+void printResults(vector<Process> &p, double avgWT, double avgTAT)
 {
     cout << "\n+-----+------+------+------+------+------+\n";
     cout << "| PID |  AT  |  BT  |  CT  | TAT  |  WT  |\n";
     cout << "+-----+------+------+------+------+------+\n";
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         cout << "| " << setw(3) << p[i].pid << " | "
              << setw(4) << p[i].at << " | "
@@ -186,19 +168,6 @@ void printResults(const vector<Process> &p, double avgWT, double avgTAT)
     cout << "Average TAT = " << avgTAT << "\n";
 }
 
-void printCalculationDetails(const vector<Process> &p)
-{
-    cout << "\nCalculation Details:\n";
-    for (size_t i = 0; i < p.size(); i++)
-    {
-        cout << "P" << p[i].pid
-             << ": TAT = CT - AT = " << p[i].ct << " - " << p[i].at
-             << " = " << p[i].tat
-             << ", WT = TAT - BT = " << p[i].tat << " - " << p[i].bt
-             << " = " << p[i].wt << "\n";
-    }
-}
-
 int main()
 {
     vector<Process> p;
@@ -209,7 +178,6 @@ int main()
     inputProcesses(p);
     runSJF(p, gantt, avgWT, avgTAT);
     printGanttChart(gantt);
-    printCalculationDetails(p);
     printResults(p, avgWT, avgTAT);
 
     return 0;
