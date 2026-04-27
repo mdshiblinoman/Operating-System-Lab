@@ -6,11 +6,9 @@ Write a C program that creates a child process using fork(). Print:
     Parent Process ID (PPID) of child
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
+#include <bits/stdc++.h>
 #include <sys/wait.h>
-#include <unistd.h>
+using namespace std;
 
 int main(void)
 {

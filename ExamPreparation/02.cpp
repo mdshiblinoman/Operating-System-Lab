@@ -6,11 +6,9 @@ Write a program where:
 Observe execution order.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
+#include <bits/stdc++.h>
 #include <sys/wait.h>
-#include <unistd.h>
+using namespace std;
 
 int main(void)
 {
