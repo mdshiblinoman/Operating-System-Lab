@@ -4,6 +4,7 @@ Create two child processes from one parent process and display the process tree.
 */
 
 #include <bits/stdc++.h>
+#include <unistd.h>
 #include <sys/wait.h>
 using namespace std;
 
@@ -19,7 +20,6 @@ int main()
 
     if (child1 == 0)
     {
-        // First child
         cout << "Child 1 PID: " << getpid()
              << " | Parent PID: " << getppid() << "\n";
         return 0;
@@ -35,21 +35,21 @@ int main()
 
     if (child2 == 0)
     {
-        // Second child
         cout << "Child 2 PID: " << getpid()
              << " | Parent PID: " << getppid() << "\n";
         return 0;
     }
 
-    // Parent process
+    // Parent
     cout << "Parent PID: " << getpid() << "\n";
-    cout << "Process Tree:\n";
+
+    waitpid(child1, NULL, 0);
+    waitpid(child2, NULL, 0);
+
+    cout << "\nProcess Tree:\n";
     cout << "Parent (" << getpid() << ")\n";
     cout << "|- Child 1 (" << child1 << ")\n";
     cout << "|- Child 2 (" << child2 << ")\n";
-
-    wait(NULL);
-    wait(NULL);
 
     return 0;
 }

@@ -7,6 +7,13 @@ struct Process
     bool done;
 };
 
+struct GanttBlock
+{
+    string label;
+    int start;
+    int end;
+};
+
 void inputProcesses(vector<Process> &p)
 {
     int n;
@@ -85,7 +92,7 @@ int nextArrivalTime(const vector<Process> &p)
     return next_at;
 }
 
-void runNonPreemptivePriority(vector<Process> &p)
+void runNonPreemptivePriority(vector<Process> &p, vector<GanttBlock> &gantt)
 {
     int n = static_cast<int>(p.size());
     int done_count = 0;
@@ -97,16 +104,45 @@ void runNonPreemptivePriority(vector<Process> &p)
 
         if (idx == -1)
         {
-            t = nextArrivalTime(p);
+            int next_at = nextArrivalTime(p);
+            if (next_at > t)
+            {
+                gantt.push_back({"Idle", t, next_at});
+                t = next_at;
+            }
             continue;
         }
 
+        int start = t;
         t += p[idx].bt;
         p[idx].ct = t;
         p[idx].tat = p[idx].ct - p[idx].at;
         p[idx].wt = p[idx].tat - p[idx].bt;
         p[idx].done = true;
         done_count++;
+
+        gantt.push_back({"P" + to_string(p[idx].pid), start, t});
+    }
+}
+
+void printGanttChart(const vector<GanttBlock> &gantt)
+{
+    cout << "\nGantt Chart:\n";
+
+    for (size_t i = 0; i < gantt.size(); i++)
+    {
+        cout << "| " << gantt[i].label << " ";
+    }
+    cout << "|\n";
+
+    if (!gantt.empty())
+    {
+        cout << gantt[0].start;
+        for (size_t i = 0; i < gantt.size(); i++)
+        {
+            cout << setw(6) << gantt[i].end;
+        }
+        cout << "\n";
     }
 }
 
@@ -142,9 +178,11 @@ void printResults(const vector<Process> &p)
 int main()
 {
     vector<Process> p;
+    vector<GanttBlock> gantt;
 
     inputProcesses(p);
-    runNonPreemptivePriority(p);
+    runNonPreemptivePriority(p, gantt);
+    printGanttChart(gantt);
     printResults(p);
 
     return 0;

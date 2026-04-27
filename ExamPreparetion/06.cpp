@@ -15,6 +15,13 @@ struct Process
     int pid, at, bt, rt, ct, tat, wt;
 };
 
+struct GanttBlock
+{
+    string label;
+    int start;
+    int end;
+};
+
 void inputProcesses(vector<Process> &p)
 {
     int n;
@@ -48,6 +55,21 @@ void inputProcesses(vector<Process> &p)
     }
 }
 
+int nextArrivalTime(const vector<Process> &p, int currentTime)
+{
+    int nextArrival = INT_MAX;
+
+    for (size_t i = 0; i < p.size(); i++)
+    {
+        if (p[i].rt > 0 && p[i].at > currentTime)
+        {
+            nextArrival = min(nextArrival, p[i].at);
+        }
+    }
+
+    return nextArrival == INT_MAX ? -1 : nextArrival;
+}
+
 int findShortestRemainingProcess(const vector<Process> &p, int t)
 {
     int idx = -1;
@@ -72,11 +94,21 @@ int findShortestRemainingProcess(const vector<Process> &p, int t)
     return idx;
 }
 
-void calculateSRTF(vector<Process> &p)
+void addGanttBlock(vector<GanttBlock> &gantt, const string &label, int start, int end)
+{
+    if (start < end)
+    {
+        gantt.push_back({label, start, end});
+    }
+}
+
+void calculateSRTF(vector<Process> &p, vector<GanttBlock> &gantt)
 {
     int done = 0;
     int t = 0;
     int n = static_cast<int>(p.size());
+    string currentLabel = "";
+    int segmentStart = 0;
 
     while (done < n)
     {
@@ -84,8 +116,38 @@ void calculateSRTF(vector<Process> &p)
 
         if (idx == -1)
         {
-            t++;
+            int nextArrival = nextArrivalTime(p, t);
+
+            if (nextArrival == -1)
+            {
+                break;
+            }
+
+            if (currentLabel != "Idle")
+            {
+                addGanttBlock(gantt, currentLabel, segmentStart, t);
+                currentLabel = "Idle";
+                segmentStart = t;
+            }
+
+            t = nextArrival;
+
+            if (currentLabel != "Idle")
+            {
+                currentLabel = "Idle";
+                segmentStart = t;
+            }
+
             continue;
+        }
+
+        string label = "P" + to_string(p[idx].pid);
+
+        if (currentLabel != label)
+        {
+            addGanttBlock(gantt, currentLabel, segmentStart, t);
+            currentLabel = label;
+            segmentStart = t;
         }
 
         p[idx].rt--;
@@ -98,6 +160,29 @@ void calculateSRTF(vector<Process> &p)
             p[idx].tat = p[idx].ct - p[idx].at;
             p[idx].wt = p[idx].tat - p[idx].bt;
         }
+    }
+
+    addGanttBlock(gantt, currentLabel, segmentStart, t);
+}
+
+void printGanttChart(const vector<GanttBlock> &gantt)
+{
+    cout << "\nGantt Chart:\n";
+
+    for (size_t i = 0; i < gantt.size(); i++)
+    {
+        cout << "| " << gantt[i].label << " ";
+    }
+    cout << "|\n";
+
+    if (!gantt.empty())
+    {
+        cout << gantt[0].start;
+        for (size_t i = 0; i < gantt.size(); i++)
+        {
+            cout << setw(6) << gantt[i].end;
+        }
+        cout << "\n";
     }
 }
 
@@ -123,9 +208,11 @@ void printResults(const vector<Process> &p)
 int main()
 {
     vector<Process> p;
+    vector<GanttBlock> gantt;
 
     inputProcesses(p);
-    calculateSRTF(p);
+    calculateSRTF(p, gantt);
+    printGanttChart(gantt);
     printResults(p);
 
     return 0;

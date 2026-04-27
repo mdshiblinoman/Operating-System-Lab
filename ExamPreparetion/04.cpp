@@ -16,30 +16,26 @@ struct Process
     int pid, at, bt, ct, tat, wt;
 };
 
-int inputProcessCount()
+struct GanttBlock
 {
-    int n;
-    cout << "Enter number of processes: ";
-    cin >> n;
-    return n;
-}
+    string label;
+    int start, end;
+};
 
 void inputProcesses(vector<Process> &p)
 {
-    for (size_t i = 0; i < p.size(); i++)
-    {
-        p[i].pid = static_cast<int>(i) + 1;
-    }
+    for (int i = 0; i < p.size(); i++)
+        p[i].pid = i + 1;
 
     cout << "Enter arrival times for all processes:\n";
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         cout << "AT of P" << p[i].pid << ": ";
         cin >> p[i].at;
     }
 
     cout << "Enter burst times for all processes:\n";
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         cout << "BT of P" << p[i].pid << ": ";
         cin >> p[i].bt;
@@ -48,9 +44,9 @@ void inputProcesses(vector<Process> &p)
 
 void sortByArrivalTime(vector<Process> &p)
 {
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
-        for (size_t j = i + 1; j < p.size(); j++)
+        for (int j = i + 1; j < p.size(); j++)
         {
             if (p[i].at > p[j].at || (p[i].at == p[j].at && p[i].pid > p[j].pid))
             {
@@ -60,22 +56,26 @@ void sortByArrivalTime(vector<Process> &p)
     }
 }
 
-void calculateFCFS(vector<Process> &p, double &avgWT, double &avgTAT)
+void calculateFCFS(vector<Process> &p, vector<GanttBlock> &gantt, double &avgWT, double &avgTAT)
 {
     int time = 0;
     int totalWT = 0;
     int totalTAT = 0;
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         if (time < p[i].at)
         {
+            gantt.push_back({"Idle", time, p[i].at});
             time = p[i].at;
         }
 
+        int start = time;
         p[i].ct = time + p[i].bt;
         p[i].tat = p[i].ct - p[i].at;
         p[i].wt = p[i].tat - p[i].bt;
+
+        gantt.push_back({"P" + to_string(p[i].pid), start, p[i].ct});
 
         totalWT += p[i].wt;
         totalTAT += p[i].tat;
@@ -86,13 +86,34 @@ void calculateFCFS(vector<Process> &p, double &avgWT, double &avgTAT)
     avgTAT = static_cast<double>(totalTAT) / p.size();
 }
 
+void printGanttChart(const vector<GanttBlock> &gantt)
+{
+    cout << "\nGantt Chart:\n";
+
+    for (int i = 0; i < gantt.size(); i++)
+    {
+        cout << "| " << gantt[i].label << " ";
+    }
+    cout << "|\n";
+
+    if (!gantt.empty())
+    {
+        cout << gantt[0].start;
+        for (int i = 0; i < gantt.size(); i++)
+        {
+            cout << setw(6) << gantt[i].end;
+        }
+        cout << "\n";
+    }
+}
+
 void printResults(const vector<Process> &p, double avgWT, double avgTAT)
 {
     cout << "\n+-----+------+------+------+------+------+\n";
     cout << "| PID |  AT  |  BT  |  CT  | TAT  |  WT  |\n";
     cout << "+-----+------+------+------+------+------+\n";
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         cout << "| " << setw(3) << p[i].pid << " | "
              << setw(4) << p[i].at << " | "
@@ -110,21 +131,19 @@ void printResults(const vector<Process> &p, double avgWT, double avgTAT)
 
 int main()
 {
-    int n = inputProcessCount();
-
-    if (n <= 0)
-    {
-        cout << "Number of processes must be greater than 0.\n";
-        return 0;
-    }
+    int n;
+    cout << "Enter number of processes: ";
+    cin >> n;
 
     vector<Process> p(n);
+    vector<GanttBlock> gantt;
     double avgWT = 0.0;
     double avgTAT = 0.0;
 
     inputProcesses(p);
     sortByArrivalTime(p);
-    calculateFCFS(p, avgWT, avgTAT);
+    calculateFCFS(p, gantt, avgWT, avgTAT);
+    printGanttChart(gantt);
     printResults(p, avgWT, avgTAT);
 
     return 0;
