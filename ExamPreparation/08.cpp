@@ -60,23 +60,12 @@ int pickProcess(const vector<Process> &p, int t)
 {
     int idx = -1;
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
         if (p[i].at <= t && p[i].rt > 0)
         {
-            if (idx == -1)
-            {
-                idx = i;
-            }
-            else if (p[i].pr < p[idx].pr)
-            {
-                idx = i;
-            }
-            else if (p[i].pr == p[idx].pr && p[i].at < p[idx].at)
-            {
-                idx = i;
-            }
-            else if (p[i].pr == p[idx].pr && p[i].at == p[idx].at && p[i].pid < p[idx].pid)
+            if (idx == -1 || (p[i].pr < p[idx].pr) || (p[i].pr == p[idx].pr && p[i].at < p[idx].at) ||
+                (p[i].pr == p[idx].pr && p[i].at == p[idx].at && p[i].pid < p[idx].pid))
             {
                 idx = i;
             }

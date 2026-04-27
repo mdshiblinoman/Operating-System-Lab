@@ -50,28 +50,15 @@ int pickNextProcess(const vector<Process> &p, int t)
 {
     int idx = -1;
 
-    for (size_t i = 0; i < p.size(); i++)
+    for (int i = 0; i < p.size(); i++)
     {
-        if (p[i].done || p[i].at > t)
+        if (p[i].at <= t && p[i].rt > 0)
         {
-            continue;
-        }
-
-        if (idx == -1)
-        {
-            idx = static_cast<int>(i);
-        }
-        else if (p[i].pr < p[idx].pr)
-        {
-            idx = static_cast<int>(i);
-        }
-        else if (p[i].pr == p[idx].pr && p[i].at < p[idx].at)
-        {
-            idx = static_cast<int>(i);
-        }
-        else if (p[i].pr == p[idx].pr && p[i].at == p[idx].at && p[i].pid < p[idx].pid)
-        {
-            idx = static_cast<int>(i);
+            if (idx == -1 || (p[i].pr < p[idx].pr) || (p[i].pr == p[idx].pr && p[i].at < p[idx].at) ||
+                (p[i].pr == p[idx].pr && p[i].at == p[idx].at && p[i].pid < p[idx].pid))
+            {
+                idx = i;
+            }
         }
     }
 
