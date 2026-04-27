@@ -25,8 +25,8 @@ void inputMatrix(vector<vector<int>> &mat, int r, int c, const string &name)
 bool findSafeSequence(const vector<vector<int>> &alloc, const vector<vector<int>> &mx,
                       const vector<int> &avail, vector<int> &safe_seq)
 {
-    int n = static_cast<int>(alloc.size());
-    int m = static_cast<int>(avail.size());
+    int n = alloc.size();
+    int m = avail.size();
 
     vector<vector<int>> need(n, vector<int>(m, 0));
     for (int i = 0; i < n; i++)

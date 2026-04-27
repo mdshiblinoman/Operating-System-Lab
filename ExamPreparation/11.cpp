@@ -24,7 +24,7 @@ void inputMatrix(vector<vector<int>> &mat, int r, int c, const string &name)
 void inputVector(vector<int> &v, const string &name)
 {
     cout << "Enter " << name << " vector (" << v.size() << " values):\n";
-    for (int i = 0; i < static_cast<int>(v.size()); i++)
+    for (int i = 0; i < v.size(); i++)
     {
         cin >> v[i];
     }
@@ -33,8 +33,8 @@ void inputVector(vector<int> &v, const string &name)
 void detectDeadlock(const vector<vector<int>> &alloc, const vector<vector<int>> &req,
                     const vector<int> &avail)
 {
-    int n = static_cast<int>(alloc.size());
-    int m = static_cast<int>(avail.size());
+    int n = alloc.size();
+    int m = avail.size();
 
     vector<int> work = avail;
     vector<bool> finish(n, false);
