@@ -1,3 +1,12 @@
+/*
+Question 5 — SJF Non-Preemptive
+Implement Shortest Job First (Non-Preemptive) scheduling algorithm.
+Display:
+    Gantt Chart
+    Waiting Time
+    Turnaround Time
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 

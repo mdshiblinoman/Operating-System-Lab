@@ -1,3 +1,12 @@
+/*
+Question 7 — Round Robin Scheduling
+Implement Round Robin Scheduling using a user-defined time quantum.
+Display:
+    Gantt Chart
+    Waiting Time
+    Turnaround Time
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 

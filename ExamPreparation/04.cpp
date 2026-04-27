@@ -1,17 +1,19 @@
-#include <iomanip>
-#include <iostream>
-#include <vector>
+/*
+Question 4 — FCFS Scheduling
+Write a program to implement First Come First Serve (FCFS) CPU scheduling algorithm
+and calculate:
+    Waiting Time
+    Turnaround Time
+    Average Waiting Time
+    Average Turnaround Time
+*/
 
+#include <bits/stdc++.h>
 using namespace std;
 
 struct Process
 {
-    int pid;
-    int at;
-    int bt;
-    int ct;
-    int tat;
-    int wt;
+    int pid, at, bt, ct, tat, wt;
 };
 
 int inputProcessCount()
