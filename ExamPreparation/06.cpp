@@ -51,7 +51,7 @@ void inputProcesses(vector<Process> &p)
 int findShortestRemainingProcess(const vector<Process> &p, int t)
 {
     int idx = -1;
-    int min_rt = numeric_limits<int>::max();
+    int min_rt = INT_MAX;
 
     for (size_t i = 0; i < p.size(); i++)
     {
@@ -60,11 +60,11 @@ int findShortestRemainingProcess(const vector<Process> &p, int t)
             if (p[i].rt < min_rt)
             {
                 min_rt = p[i].rt;
-                idx = static_cast<int>(i);
+                idx = i;
             }
             else if (p[i].rt == min_rt && idx != -1 && p[i].at < p[idx].at)
             {
-                idx = static_cast<int>(i);
+                idx = i;
             }
         }
     }

@@ -66,19 +66,19 @@ int pickProcess(const vector<Process> &p, int t)
         {
             if (idx == -1)
             {
-                idx = static_cast<int>(i);
+                idx = i;
             }
             else if (p[i].pr < p[idx].pr)
             {
-                idx = static_cast<int>(i);
+                idx = i;
             }
             else if (p[i].pr == p[idx].pr && p[i].at < p[idx].at)
             {
-                idx = static_cast<int>(i);
+                idx = i;
             }
             else if (p[i].pr == p[idx].pr && p[i].at == p[idx].at && p[i].pid < p[idx].pid)
             {
-                idx = static_cast<int>(i);
+                idx = i;
             }
         }
     }

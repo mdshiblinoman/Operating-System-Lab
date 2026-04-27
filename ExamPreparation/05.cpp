@@ -64,19 +64,19 @@ int pickNextProcess(const vector<Process> &p, int time)
 
         if (idx == -1)
         {
-            idx = static_cast<int>(i);
+            idx = i;
         }
         else if (p[i].bt < p[idx].bt)
         {
-            idx = static_cast<int>(i);
+            idx = i;
         }
         else if (p[i].bt == p[idx].bt && p[i].at < p[idx].at)
         {
-            idx = static_cast<int>(i);
+            idx = i;
         }
         else if (p[i].bt == p[idx].bt && p[i].at == p[idx].at && p[i].pid < p[idx].pid)
         {
-            idx = static_cast<int>(i);
+            idx = i;
         }
     }
 
