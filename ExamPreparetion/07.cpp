@@ -108,7 +108,7 @@ void runRoundRobin(vector<Process> &p, int tq, vector<GanttBlock> &g)
 
         for (int i = 0; i < n; i++)
         {
-            if (!in_q[i] && p[i].rt > 0 && p[i].at <= t)
+            if (i != idx && !in_q[i] && p[i].rt > 0 && p[i].at <= t)
             {
                 q.push(i);
                 in_q[i] = true;
