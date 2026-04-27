@@ -3,20 +3,13 @@ using namespace std;
 
 struct Process
 {
-    int pid;
-    int at;
-    int bt;
-    int rt;
-    int ct;
-    int tat;
-    int wt;
+    int pid, at, bt, rt, ct, tat, wt;
 };
 
 struct GanttBlock
 {
     string label;
-    int start;
-    int end;
+    int start, end;
 };
 
 void inputProcesses(vector<Process> &p)
@@ -53,7 +46,7 @@ void inputProcesses(vector<Process> &p)
 
 void runRoundRobin(vector<Process> &p, int tq, vector<GanttBlock> &g)
 {
-    int n = static_cast<int>(p.size());
+    int n = p.size();
     int done = 0;
     int t = 0;
     queue<int> q;
