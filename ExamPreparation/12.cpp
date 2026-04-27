@@ -13,7 +13,7 @@ using namespace std;
 void printFrames(const vector<int> &frames)
 {
     cout << "Frames: ";
-    for (size_t i = 0; i < frames.size(); i++)
+    for (int i = 0; i < frames.size(); i++)
     {
         if (frames[i] == -1)
         {

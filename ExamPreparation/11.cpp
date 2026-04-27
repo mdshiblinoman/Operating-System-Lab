@@ -30,8 +30,7 @@ void inputVector(vector<int> &v, const string &name)
     }
 }
 
-void detectDeadlock(const vector<vector<int>> &alloc,
-                    const vector<vector<int>> &req,
+void detectDeadlock(const vector<vector<int>> &alloc, const vector<vector<int>> &req,
                     const vector<int> &avail)
 {
     int n = static_cast<int>(alloc.size());

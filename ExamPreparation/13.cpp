@@ -45,6 +45,7 @@ int main()
 
     vector<int> frames(f, -1);
     vector<int> last_used(f, -1);
+    int hit = 0;
     int fault = 0;
 
     for (int i = 0; i < n; i++)
@@ -57,6 +58,7 @@ int main()
             if (frames[j] == page)
             {
                 found = true;
+                hit++;
                 last_used[j] = i;
                 break;
             }
@@ -96,6 +98,7 @@ int main()
         printFrames(frames);
     }
 
+    cout << "\nTotal Page Hits = " << hit << "\n";
     cout << "\nTotal Page Faults = " << fault << "\n";
 
     return 0;

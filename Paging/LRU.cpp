@@ -1,133 +1,105 @@
+/*
+Question 12 — LRU Page Replacement
+Implement the Least Recently Used (LRU) page replacement algorithm.
+Display:
+    frame status after each page reference
+    total page faults
+*/
+
 #include <bits/stdc++.h>
 using namespace std;
 
-int readPositiveInt(const string &prompt)
-{
-    int value;
-    while (true)
-    {
-        cout << prompt;
-        cin >> value;
-
-        if (!cin.fail() && value > 0)
-        {
-            return value;
-        }
-
-        cin.clear();
-        cin.ignore(10000, '\n');
-        cout << "Please enter a positive integer.\n";
-    }
-}
-
-vector<int> readReferenceString(int totalReferences)
-{
-    vector<int> pages(totalReferences);
-    cout << "Enter page reference string:\n";
-    for (int i = 0; i < totalReferences; i++)
-    {
-        cin >> pages[i];
-    }
-    return pages;
-}
-
-int findPageIndex(const vector<int> &frames, int page)
-{
-    for (int i = 0; i < static_cast<int>(frames.size()); i++)
-    {
-        if (frames[i] == page)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int getLeastRecentlyUsedIndex(const vector<int> &lastUsed)
-{
-    int index = 0;
-    for (int i = 1; i < static_cast<int>(lastUsed.size()); i++)
-    {
-        if (lastUsed[i] < lastUsed[index])
-        {
-            index = i;
-        }
-    }
-    return index;
-}
-
 void printFrames(const vector<int> &frames)
 {
-    for (int value : frames)
+    cout << "Frames: ";
+    for (size_t i = 0; i < frames.size(); i++)
     {
-        if (value == -1)
+        if (frames[i] == -1)
         {
-            cout << setw(4) << "-";
+            cout << "- ";
         }
         else
         {
-            cout << setw(4) << value;
+            cout << frames[i] << " ";
         }
     }
-}
-
-void simulateLRU(const vector<int> &referenceString, int frameCount)
-{
-    vector<int> frames(frameCount, -1);
-    vector<int> lastUsed(frameCount, -1);
-    int pageHits = 0;
-    int pageFaults = 0;
-
-    cout << "\nLRU Page Replacement\n";
-    cout << left << setw(10) << "Page" << setw(25) << "Frames" << "Result\n";
-
-    for (int time = 0; time < static_cast<int>(referenceString.size()); time++)
-    {
-        int page = referenceString[time];
-        int pageIndex = findPageIndex(frames, page);
-        bool isHit = (pageIndex != -1);
-
-        if (isHit)
-        {
-            pageHits++;
-            lastUsed[pageIndex] = time;
-        }
-        else
-        {
-            pageFaults++;
-
-            int emptyIndex = findPageIndex(frames, -1);
-            if (emptyIndex != -1)
-            {
-                frames[emptyIndex] = page;
-                lastUsed[emptyIndex] = time;
-            }
-            else
-            {
-                int lruIndex = getLeastRecentlyUsedIndex(lastUsed);
-                frames[lruIndex] = page;
-                lastUsed[lruIndex] = time;
-            }
-        }
-
-        cout << left << setw(10) << page;
-        printFrames(frames);
-        cout << "   " << (isHit ? "Hit" : "Fault") << "\n";
-    }
-
-    cout << "\nTotal Page Hits: " << pageHits << "\n";
-    cout << "Total Page Faults: " << pageFaults << "\n";
+    cout << "\n";
 }
 
 int main()
 {
-    cout << "LRU Page Replacement Simulation\n";
+    int n, f;
 
-    int totalReferences = readPositiveInt("Enter number of page references: ");
-    vector<int> referenceString = readReferenceString(totalReferences);
-    int frameCount = readPositiveInt("Enter number of frames: ");
+    cout << "Enter number of pages in reference string: ";
+    cin >> n;
 
-    simulateLRU(referenceString, frameCount);
+    vector<int> pages(n);
+    cout << "Enter page reference string:\n";
+    for (int i = 0; i < n; i++)
+    {
+        cin >> pages[i];
+    }
+
+    cout << "Enter number of frames: ";
+    cin >> f;
+
+    vector<int> frames(f, -1);
+    vector<int> last_used(f, -1);
+    int hit = 0;
+    int fault = 0;
+
+    for (int i = 0; i < n; i++)
+    {
+        int page = pages[i];
+        bool found = false;
+
+        for (int j = 0; j < f; j++)
+        {
+            if (frames[j] == page)
+            {
+                found = true;
+                hit++;
+                last_used[j] = i;
+                break;
+            }
+        }
+
+        if (!found)
+        {
+            fault++;
+            int pos = -1;
+
+            for (int j = 0; j < f; j++)
+            {
+                if (frames[j] == -1)
+                {
+                    pos = j;
+                    break;
+                }
+            }
+
+            if (pos == -1)
+            {
+                pos = 0;
+                for (int j = 1; j < f; j++)
+                {
+                    if (last_used[j] < last_used[pos])
+                    {
+                        pos = j;
+                    }
+                }
+            }
+
+            frames[pos] = page;
+            last_used[pos] = i;
+        }
+
+        cout << "After page " << page << ": ";
+        printFrames(frames);
+    }
+
+    cout << "\nTotal Page Hits = " << hit << "\n";
+    cout << "\nTotal Page Faults = " << fault << "\n";
 
     return 0;
 }
