@@ -10,7 +10,7 @@ The program should:
 #include <bits/stdc++.h>
 using namespace std;
 
-void printFrames(const vector<int> &frames)
+void printFrames(vector<int> &frames)
 {
     cout << "Frames: ";
     for (int i = 0; i < frames.size(); i++)

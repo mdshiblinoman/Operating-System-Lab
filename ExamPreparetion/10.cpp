@@ -10,9 +10,8 @@ The program should:
 #include <bits/stdc++.h>
 using namespace std;
 
-void inputMatrix(vector<vector<int>> &mat, int r, int c, const string &name)
+void inputMatrix(vector<vector<int>> &mat, int r, int c)
 {
-    cout << "Enter " << name << " matrix (" << r << " x " << c << "):\n";
     for (int i = 0; i < r; i++)
     {
         for (int j = 0; j < c; j++)
@@ -22,8 +21,8 @@ void inputMatrix(vector<vector<int>> &mat, int r, int c, const string &name)
     }
 }
 
-bool findSafeSequence(const vector<vector<int>> &alloc, const vector<vector<int>> &mx,
-                      const vector<int> &avail, vector<int> &safe_seq)
+bool findSafeSequence(vector<vector<int>> &alloc, vector<vector<int>> &mx,
+                      vector<int> &avail, vector<int> &safe_seq)
 {
     int n = alloc.size();
     int m = avail.size();
@@ -97,8 +96,11 @@ int main()
     vector<int> avail(m);
     vector<int> safe_seq;
 
-    inputMatrix(alloc, n, m, "Allocation");
-    inputMatrix(mx, n, m, "Maximum");
+    cout << "Enter Allocation Matrix:\n";
+    inputMatrix(alloc, n, m);
+
+    cout << "Enter Maximum Matrix:\n";
+    inputMatrix(mx, n, m);
 
     cout << "Enter Available vector (" << m << " values):\n";
     for (int i = 0; i < m; i++)
