@@ -30,8 +30,8 @@ void inputVector(vector<int> &v, const string &name)
     }
 }
 
-void detectDeadlock(const vector<vector<int>> &alloc, const vector<vector<int>> &req,
-                    const vector<int> &avail)
+void detectDeadlock(vector<vector<int>> &alloc, vector<vector<int>> &req,
+                    vector<int> &avail)
 {
     int n = alloc.size();
     int m = avail.size();
@@ -110,7 +110,7 @@ void detectDeadlock(const vector<vector<int>> &alloc, const vector<vector<int>> 
     else
     {
         cout << "\nDeadlock detected in processes: ";
-        for (size_t i = 0; i < deadlocked.size(); i++)
+        for (int i = 0; i < deadlocked.size(); i++)
         {
             cout << "P" << deadlocked[i];
             if (i != deadlocked.size() - 1)
